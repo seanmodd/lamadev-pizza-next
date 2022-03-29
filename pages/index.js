@@ -19,29 +19,43 @@ export default function Home({ pizzaList, admin }) {
       </Head>
       <Featured />
       <AddButton setClose={setClose} />
-      {/* <PizzaList pizzaList={pizzaList} /> */}
+      <PizzaList pizzaList={pizzaList} />
       {!close && <Add setClose={setClose} />}
     </div>
   );
 }
 
 export const getServerSideProps = async (ctx) => {
-  const myCookie = ctx.req?.cookies || '';
-  let admin = false;
+  // const myCookie = ctx.req?.cookies || '';
+  // let admin = false;
+
   // if (myCookie.token === process.env.TOKEN) {
-  if (myCookie.__utma === process.env.TOKEN) {
-    admin = true;
+  //   admin = true;
+  // }
+
+  // const res = await axios.get('http://localhost:3000/api/products');
+  const data = [];
+  let error = '';
+  try {
+    const res = await fetch('http://localhost:3000/api/products', {
+      method: 'GET',
+      headers: {
+        // update with your user-agent
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36',
+        Accept: 'application/json; charset=UTF-8',
+      },
+    });
+    console.log('This is res:', await res.json());
+    const data = await res.json();
+  } catch (err) {
+    console.log('This is err:', err);
+    error = err;
   }
 
-  console.log('This is process.env.TOKEN: ', process.env.TOKEN);
-  console.log('This is myCookie.token: ', myCookie.token);
-  console.log('This is myCookie.__utma: ', myCookie.__utma);
-  console.log('This is ctx.req?.cookies: ', ctx.req?.cookies);
-  // const res = await axios.get('http://localhost:3000/api/products');
-  // console.log('This is res: ', res);
   return {
     props: {
-      // pizzaList: res.data,
+      pizzaList: data,
       // admin,
     },
   };
