@@ -1,17 +1,17 @@
-import dbConnect from "../../../util/mongo";
-import Product from "../../../models/Product";
+import dbConnect from '../../../util/mongo';
+import Product from '../../../models/Product';
 
 export default async function handler(req, res) {
   const {
     method,
     query: { id },
-    cookies
+    cookies,
   } = req;
-  const token = cookies.token
+  const { token } = cookies;
 
   dbConnect();
 
-  if (method === "GET") {
+  if (method === 'GET') {
     try {
       const product = await Product.findById(id);
       res.status(200).json(product);
@@ -20,9 +20,9 @@ export default async function handler(req, res) {
     }
   }
 
-  if (method === "PUT") {
-    if(!token || token !== process.env.token){
-      return res.status(401).json("Not authenticated!")
+  if (method === 'PUT') {
+    if (!token || token !== process.env.token) {
+      return res.status(401).json('Not authenticated!');
     }
     try {
       const product = await Product.findByIdAndUpdate(id, req.body, {
@@ -34,13 +34,13 @@ export default async function handler(req, res) {
     }
   }
 
-  if (method === "DELETE") {
-    if(!token || token !== process.env.token){
-      return res.status(401).json("Not authenticated!")
+  if (method === 'DELETE') {
+    if (!token || token !== process.env.token) {
+      return res.status(401).json('Not authenticated!');
     }
     try {
       await Product.findByIdAndDelete(id);
-      res.status(200).json("The product has been deleted!");
+      res.status(200).json('The product has been deleted!');
     } catch (err) {
       res.status(500).json(err);
     }
